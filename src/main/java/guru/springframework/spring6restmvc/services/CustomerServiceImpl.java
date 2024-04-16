@@ -6,16 +6,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/**
- * Created by jt, Spring Framework Guru.
- */
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
     private Map<UUID, CustomerDTO> customerMap;
 
     public CustomerServiceImpl() {
-        CustomerDTO customer1 = CustomerDTO.builder()
+        CustomerDTO customerDTO1 = guru.springframework.spring6restmvc.model.CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Customer 1")
                 .version(1)
@@ -23,7 +20,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        CustomerDTO customer2 = CustomerDTO.builder()
+        CustomerDTO customerDTO2 = guru.springframework.spring6restmvc.model.CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Customer 2")
                 .version(1)
@@ -31,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .updateDate(LocalDateTime.now())
                 .build();
 
-        CustomerDTO customer3 = CustomerDTO.builder()
+        CustomerDTO customerDTO3 = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .name("Customer 3")
                 .version(1)
@@ -40,9 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
 
         customerMap = new HashMap<>();
-        customerMap.put(customer1.getId(), customer1);
-        customerMap.put(customer2.getId(), customer2);
-        customerMap.put(customer3.getId(), customer3);
+        customerMap.put(customerDTO1.getId(), customerDTO1);
+        customerMap.put(customerDTO2.getId(), customerDTO2);
+        customerMap.put(customerDTO3.getId(), customerDTO3);
     }
 
     @Override
@@ -51,25 +48,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, CustomerDTO customer) {
+    public void updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
         CustomerDTO existing = customerMap.get(customerId);
-        existing.setName(customer.getName());
+        existing.setName(customerDTO.getName());
     }
 
     @Override
-    public CustomerDTO saveNewCustomer(CustomerDTO customer) {
+    public CustomerDTO saveNewCustomer(CustomerDTO customerDTO) {
 
-        CustomerDTO savedCustomer = CustomerDTO.builder()
+        CustomerDTO savedCustomerDTO = guru.springframework.spring6restmvc.model.CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
                 .updateDate(LocalDateTime.now())
                 .createdDate(LocalDateTime.now())
-                .name(customer.getName())
+                .name(customerDTO.getName())
                 .build();
 
-        customerMap.put(savedCustomer.getId(), savedCustomer);
+        customerMap.put(savedCustomerDTO.getId(), savedCustomerDTO);
 
-        return savedCustomer;
+        return savedCustomerDTO;
     }
 
     @Override

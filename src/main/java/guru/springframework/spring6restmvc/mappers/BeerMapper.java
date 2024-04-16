@@ -5,7 +5,7 @@ import guru.springframework.spring6restmvc.model.BeerDTO;
 import org.mapstruct.Mapper;
 
 @Mapper
-public interface BeerMap {
+public interface BeerMapper {
 
     Beer beerDtoToBeer(BeerDTO dto);
 
