@@ -30,8 +30,6 @@ class BeerControllerIT {
     @Autowired
     BeerMapper beerMapper;
 
-
-
     @Rollback
     @Transactional
     @Test
