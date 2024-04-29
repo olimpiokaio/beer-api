@@ -105,6 +105,20 @@ class BeerControllerTest {
     }
 
     @Test
+    void testUpdateBeerBlackName() throws Exception {
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        beer.setBeerName("");
+        given(beerService.updateBeerById(any(), any())).willReturn(Optional.of(beer));
+
+        mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
     void testCreateNewBeer() throws Exception {
 //        ObjectMapper objectMapper = new ObjectMapper();
 //        objectMapper.findAndRegisterModules(); // o mapper vai registrar modulos para auxiliar na conversao do objeto
@@ -131,8 +145,10 @@ class BeerControllerTest {
         MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(beerDTO))
-        ).andExpect(status().isBadRequest()).andReturn();
+                .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(6)))
+        .andReturn();
 
         System.out.println(mvcResult.getResponse().getContentAsString());
     }
