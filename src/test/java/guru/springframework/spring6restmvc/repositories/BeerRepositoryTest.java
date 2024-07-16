@@ -2,13 +2,14 @@ package guru.springframework.spring6restmvc.repositories;
 
 import guru.springframework.spring6restmvc.entities.Beer;
 import guru.springframework.spring6restmvc.model.BeerStyle;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DataJpaTest
@@ -18,17 +19,17 @@ class BeerRepositoryTest {
     BeerRepository beerRepository;
 
     @Test
-    void testSaveBeer() {
-        Beer savedBeer = beerRepository.save(Beer.builder()
-                        .beerName("My Beer")
-                        .beerStyle(BeerStyle.PALE_ALE)
-                        .upc("23425324")
-                        .price(new BigDecimal("11.99"))
-                .build());
+    void testSaveBeerNameTooLong() {
 
-        beerRepository.flush();
+        assertThrows(ConstraintViolationException.class, () -> {
+            Beer savedBeer = beerRepository.save(Beer.builder()
+                    .beerName("My Beer 123456789123456789123456789123456789123456789123456789123456789123456789123456789")
+                    .beerStyle(BeerStyle.PALE_ALE)
+                    .upc("23425324")
+                    .price(new BigDecimal("11.99"))
+                    .build());
 
-        assertThat(savedBeer).isNotNull();
-        assertThat(savedBeer.getId()).isNotNull();
+            beerRepository.flush();
+        });
     }
 }
