@@ -80,9 +80,7 @@ class BeerControllerIT {
     @Transactional
     @Test
     void testDeleteByIDNotFound() {
-        assertThrows(NotFoundException.class, () -> {
-            beerController.deleteById(UUID.randomUUID());
-        });
+        assertThrows(NotFoundException.class, () -> beerController.deleteById(UUID.randomUUID()));
     }
 
     @Rollback
@@ -101,9 +99,7 @@ class BeerControllerIT {
     @Transactional
     @Test
     void testUpdateNotFound() {
-        assertThrows(NotFoundException.class, () -> {
-            beerController.updateById(UUID.randomUUID(), BeerDTO.builder().build());
-        });
+        assertThrows(NotFoundException.class, () -> beerController.updateById(UUID.randomUUID(), BeerDTO.builder().build()));
     }
 
     @Rollback
@@ -147,9 +143,7 @@ class BeerControllerIT {
 
     @Test
     void testBeerIdNotFound() {
-        assertThrows(NotFoundException.class, () -> {
-           beerController.getBeerById(UUID.randomUUID());
-        });
+        assertThrows(NotFoundException.class, () -> beerController.getBeerById(UUID.randomUUID()));
     }
 
     @Test
