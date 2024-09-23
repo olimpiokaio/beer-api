@@ -8,8 +8,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
-import java.rmi.server.UID;
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -46,6 +46,11 @@ public class BeerOrder {
 
     private String customerRef;
 
+    @ManyToOne
+    private Customer customer;
+
+    @OneToMany(mappedBy = "beerOrder")
+    private Set<BeerOrderLine> beerOrderLines;
 }
 
 
