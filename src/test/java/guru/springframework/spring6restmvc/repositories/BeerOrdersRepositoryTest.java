@@ -40,8 +40,8 @@ class BeerOrdersRepositoryTest {
                 .customer(testCustomer)
                 .build();
 
-        BeerOrder saveBeerOrder = beerOrdersRepository.saveAndFlush(beerOrder);
+        BeerOrder saveBeerOrder = beerOrdersRepository.save(beerOrder);
 
-        System.out.println(saveBeerOrder);
+        System.out.println(saveBeerOrder.getCustomerRef());
     }
 }
