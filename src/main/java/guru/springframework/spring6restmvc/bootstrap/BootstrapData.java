@@ -101,9 +101,7 @@ public class BootstrapData implements CommandLineRunner {
                     .updateDate(LocalDateTime.now())
                     .build();
 
-            beerRepository.save(beer1);
-            beerRepository.save(beer2);
-            beerRepository.save(beer3);
+            beerRepository.saveAll(Arrays.asList(beer1, beer2, beer3));
         }
     }
 

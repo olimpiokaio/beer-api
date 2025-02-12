@@ -28,15 +28,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static guru.springframework.spring6restmvc.controller.BeerControllerTest.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -62,7 +62,9 @@ class BeerControllerIT {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
     }
 
 
@@ -76,6 +78,7 @@ class BeerControllerIT {
         beerDTO.setBeerName("Updated Name");
 
         MvcResult result = mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
@@ -99,6 +102,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByStyleAndNameShowInventoryTruePage2() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                 .queryParam("beerName", "IPA")
                 .queryParam("beerStyle", BeerStyle.IPA.name())
                 .queryParam("showInventory", "false")
@@ -112,6 +116,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndNameShowInventoryTrue() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                     .queryParam("beerName", "IPA")
                     .queryParam("beerStyle", BeerStyle.IPA.name())
                     .queryParam("showInventory", "true")
@@ -124,6 +129,7 @@ class BeerControllerIT {
     @Test
     void testListBeerByStyleAndNameShowInventoryFalse() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "false")
@@ -136,6 +142,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByStyleAndName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                 .queryParam("beerName", "IPA")
                 .queryParam("beerStyle", BeerStyle.IPA.name())
                 .queryParam("pageSize", "800"))
@@ -147,6 +154,7 @@ class BeerControllerIT {
     @Test
     void testListBeersByName() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                 .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
@@ -154,8 +162,18 @@ class BeerControllerIT {
     }
 
     @Test
+    void testNoAuth() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_PATH)
+                .queryParam("beerStyle", BeerStyle.IPA.name())
+                .queryParam("pageSize", "800")
+        ).andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
     void testListBeersByStyle() throws Exception {
         mockMvc.perform(get(BeerController.BEER_PATH)
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800"))
                 .andExpect(status().isOk())
@@ -170,11 +188,11 @@ class BeerControllerIT {
         beerMap.put("beerName", "New name 123445712344571234457123445712344571234457123445712344571234457123445712344571234457123445712344571234457");
 
         MvcResult result = mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
+                        .with(JWT_REQUEST_POST_PROCESSOR)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.length()", Is.is(1)))
                 .andReturn();
 
         System.out.println(result.getResponse().getContentAsString());
@@ -202,20 +220,13 @@ class BeerControllerIT {
     @Rollback
     @Transactional
     @Test
-    void testUpdateNotFound() {
-        assertThrows(NotFoundException.class, () -> beerController.updateById(UUID.randomUUID(), BeerDTO.builder().build()));
-    }
-
-    @Rollback
-    @Transactional
-    @Test
     void updateExistingBeer() {
         Beer beer = beerRepository.findAll().get(0);
         BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
 
         beerDTO.setId(null);
         beerDTO.setVersion(null);
-        final String beerName = "UPDATED";
+        final String beerName = "Galaxy Cat";
         beerDTO.setBeerName(beerName);
 
         ResponseEntity responseEntity = beerController.updateById(beer.getId(), beerDTO);

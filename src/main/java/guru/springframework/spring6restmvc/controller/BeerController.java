@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -43,7 +44,7 @@ public class BeerController {
     }
 
     @PutMapping(BEER_PATH_ID)
-    public ResponseEntity updateById(@PathVariable("beerId")UUID beerId, @Validated @RequestBody BeerDTO beer){
+    public ResponseEntity updateById(@PathVariable("beerId") UUID beerId, @Validated @RequestBody BeerDTO beer) throws NotFoundException {
 
         if (beerService.updateBeerById(beerId, beer).isEmpty()) {
             throw new NotFoundException();
@@ -52,6 +53,7 @@ public class BeerController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    
     @PostMapping(BEER_PATH)
     public ResponseEntity handlePost(@Validated @RequestBody BeerDTO beer) {
 
@@ -73,7 +75,7 @@ public class BeerController {
     }
 
     @GetMapping(BEER_PATH_ID)
-    public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId){
+    public BeerDTO getBeerById(@PathVariable("beerId") UUID beerId) {
 
         log.debug("Get Beer by Id - in controller");
 
